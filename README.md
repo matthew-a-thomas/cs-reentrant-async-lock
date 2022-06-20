@@ -51,3 +51,7 @@ code paths; a special implementation serializes continuations and makes this
 class support mutual exclusion. And `SynchronizationContext` and a special
 awaitable type together are used to get fine-grained control over how
 asynchronous continuations are executed.
+
+# More details
+
+[https://www.matthewathomas.com/programming/2022/06/20/introducing-reentrantasynclock.html](https://www.matthewathomas.com/programming/2022/06/20/introducing-reentrantasynclock.html)
