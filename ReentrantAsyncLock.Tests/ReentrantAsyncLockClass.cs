@@ -176,5 +176,30 @@ public class ReentrantAsyncLockClass
                 mre.Set();
             }
         }
+
+        [Fact]
+        public async Task ProvideMutualExclusionOfNestedAsyncCode()
+        {
+            var asyncLock = new ReentrantAsyncLock();
+            var raceConditionDetector = 0;
+            async Task GenerateTask()
+            {
+                await using (await asyncLock.LockAsync(default))
+                {
+                    await Task.Run(() => ++raceConditionDetector);
+                }
+            }
+            for (var i = 0; i < 1000; ++i)
+            {
+                await Task.WhenAll(
+                    GenerateTask(),
+                    GenerateTask(),
+                    GenerateTask(),
+                    GenerateTask(),
+                    GenerateTask()
+                );
+            }
+            Assert.Equal(5000, raceConditionDetector);
+        }
     }
 }
