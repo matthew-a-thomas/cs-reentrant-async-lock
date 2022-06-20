@@ -2,6 +2,10 @@
 
 A reentrant asynchronous lock.
 
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/matthew-a-thomas/cs-reentrant-async-lock/.NET)](https://github.com/matthew-a-thomas/cs-reentrant-async-lock)
+
+[![Nuget](https://img.shields.io/nuget/v/ReentrantAsyncLock)](https://www.nuget.org/packages/ReentrantAsyncLock)
+
 The `ReentrantAsyncLock` class provides all three of these things:
 * Reentrance
 * Asynchronicity
