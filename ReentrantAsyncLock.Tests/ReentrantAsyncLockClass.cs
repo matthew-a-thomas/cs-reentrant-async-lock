@@ -9,63 +9,6 @@ public class ReentrantAsyncLockClass
     public class LockAsyncMethodShould
     {
         [Fact]
-        public async Task SupportAsynchronousReentrancy()
-        {
-            var asyncLock = new RecursiveAsyncLock();
-            await Task.Run(async () =>
-            {
-                using (await asyncLock.LockAsync(CancellationToken.None))
-                {
-                    await Task.Run(async () =>
-                    {
-                        using (await asyncLock.LockAsync(CancellationToken.None))
-                        {
-                            await Task.Run(async () =>
-                            {
-                                using (await asyncLock.LockAsync(CancellationToken.None))
-                                {
-                                    await Task.Run(async () =>
-                                    {
-                                        using (await asyncLock.LockAsync(CancellationToken.None))
-                                        {}
-                                    });
-                                }
-                            });
-                        }
-                    });
-                }
-            });
-        }
-
-        [Fact]
-        public async Task ProvideMutualExclusion()
-        {
-            var asyncLock = new RecursiveAsyncLock();
-            var inGuardedSection = false;
-            Task GenerateTask() => Task.Run(async () =>
-            {
-                using (await asyncLock.LockAsync(CancellationToken.None))
-                {
-                    Assert.False(inGuardedSection);
-                    inGuardedSection = true;
-                    SynchronizationContext.SetSynchronizationContext(null);
-                    await Task.Yield(); // Return to the task pool
-                    inGuardedSection = false;
-                }
-            });
-            for (var i = 0; i < 1000; ++i)
-            {
-                await Task.WhenAll(
-                    GenerateTask(),
-                    GenerateTask(),
-                    GenerateTask(),
-                    GenerateTask(),
-                    GenerateTask()
-                );
-            }
-        }
-
-        [Fact]
         public async Task SerializeReentrantCode()
         {
             var asyncLock = new RecursiveAsyncLock();
@@ -113,30 +56,41 @@ public class ReentrantAsyncLockClass
                 raceConditionActualValue
             );
         }
+    }
 
+    public class DocumentationShould
+    {
         [Fact]
-        public async Task ProvideMutualExclusionOfNestedAsyncCode()
+        public async Task BeCorrect1()
         {
             var asyncLock = new RecursiveAsyncLock();
-            var raceConditionDetector = 0;
-            async Task GenerateTask()
-            {
-                using (await asyncLock.LockAsync(default))
-                {
-                    await Task.Run(() => ++raceConditionDetector);
-                }
-            }
             for (var i = 0; i < 1000; ++i)
             {
-                await Task.WhenAll(
-                    GenerateTask(),
-                    GenerateTask(),
-                    GenerateTask(),
-                    GenerateTask(),
-                    GenerateTask()
-                );
+                var raceCondition = 0;
+                // You can acquire the lock asynchronously
+                using (await asyncLock.LockAsync(CancellationToken.None))
+                {
+                    await Task.WhenAll(
+                        Task.Run(async () =>
+                        {
+                            // The lock is reentrant
+                            using (await asyncLock.LockAsync(CancellationToken.None))
+                            {
+                                // The lock provides mutual exclusion
+                                raceCondition++;
+                            }
+                        }),
+                        Task.Run(async () =>
+                        {
+                            using (await asyncLock.LockAsync(CancellationToken.None))
+                            {
+                                raceCondition++;
+                            }
+                        })
+                    );
+                }
+                Assert.Equal(2, raceCondition);
             }
-            Assert.Equal(5000, raceConditionDetector);
         }
     }
 }
