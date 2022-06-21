@@ -13,6 +13,9 @@ public sealed class AsyncLockResult<T> : IAwaiter<T>, IAwaitable<T, AsyncLockRes
     readonly TaskAwaiter<T> _taskAwaiter;
     readonly CancellationToken _token;
 
+    /// <summary>
+    /// Creates a new <see cref="AsyncLockResult{T}"/>.
+    /// </summary>
     public AsyncLockResult(
         TaskAwaiter<T> taskAwaiter,
         CancellationToken token)

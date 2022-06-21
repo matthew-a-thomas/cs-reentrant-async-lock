@@ -7,13 +7,14 @@
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <PackageId>ReentrantAsyncLock</PackageId>
         <Description>A reentrant asynchronous lock</Description>
-        <Version>0.1.5</Version>
+        <Version>0.1.6</Version>
         <Authors>Matthew A. Thomas</Authors>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageProjectUrl>https://github.com/matthew-a-thomas/cs-reentrant-async-lock</PackageProjectUrl>
         <RepositoryUrl>https://github.com/matthew-a-thomas/cs-reentrant-async-lock</RepositoryUrl>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
     </PropertyGroup>
     
     <ItemGroup>

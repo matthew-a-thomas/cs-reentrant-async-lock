@@ -7,8 +7,8 @@ using System.Diagnostics.CodeAnalysis;
 /// </summary>
 /// <remarks>
 /// <para>
-/// This class is powered by three concepts in asynchronous C#: <see cref="ExecutionContext"/>;
-/// <see cref="SynchronizationContext"/>; and awaitable expressions. <see cref="ExecutionContext"/> automatically flows
+/// This class is powered by three concepts in asynchronous C#: <see cref="ExecutionContext"/>,
+/// <see cref="SynchronizationContext"/>, and awaitable expressions. <see cref="ExecutionContext"/> automatically flows
 /// down asynchronous code paths and allows this class to be reentrant. <see cref="SynchronizationContext"/> also
 /// automatically flows down asynchronous code paths; a special implementation serializes continuations and makes this
 /// class support mutual exclusion. And <see cref="SynchronizationContext"/> and a special awaitable type together are
