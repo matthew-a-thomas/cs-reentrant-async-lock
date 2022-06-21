@@ -67,6 +67,9 @@ This class is powered by three concepts in asynchronous C#: `ExecutionContext`,
 
 # Gotchas
 
+These are easy to work around&mdash;keep reading and you'll see how&mdash;but
+you need to be aware of them.
+
 ## Don't change the current `SynchronizationContext` once you're in the guarded section
 
 Because this is powered by a special `SynchronizationContext` you should not
@@ -111,6 +114,8 @@ await using (await asyncLock.LockAsync(CancellationToken.None))
     // This is fine; the lock still works
 }
 ```
+
+### Solution
 
 So if you're executing third party methods within the guarded section and if
 you're concerned that they might change the current `SynchronizationContext`
@@ -157,6 +162,8 @@ partial class MyUserControl
     }
 }
 ```
+
+### Solution
 
 The solution is to do the work on the dispatcher:
 
