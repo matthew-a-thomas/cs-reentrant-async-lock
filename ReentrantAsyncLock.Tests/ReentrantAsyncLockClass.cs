@@ -202,4 +202,69 @@ public class ReentrantAsyncLockClass
             Assert.Equal(5000, raceConditionDetector);
         }
     }
+
+    public class DocumentationShould
+    {
+        [Fact]
+        public async Task BeCorrect1()
+        {
+            var asyncLock = new ReentrantAsyncLock();
+            var raceCondition = 0;
+            // You can acquire the lock asynchronously
+            await using (await asyncLock.LockAsync(CancellationToken.None))
+            {
+                await Task.WhenAll(
+                    Task.Run(async () =>
+                    {
+                        // The lock is reentrant
+                        await using (await asyncLock.LockAsync(CancellationToken.None))
+                        {
+                            // The lock provides mutual exclusion
+                            raceCondition++;
+                        }
+                    }),
+                    Task.Run(async () =>
+                    {
+                        await using (await asyncLock.LockAsync(CancellationToken.None))
+                        {
+                            raceCondition++;
+                        }
+                    })
+                );
+            }
+            Assert.Equal(2, raceCondition);
+        }
+
+        [Fact]
+        public async Task BeCorrect2()
+        {
+            var asyncLock = new ReentrantAsyncLock();
+            await using (await asyncLock.LockAsync(CancellationToken.None))
+            {
+                await Task.Run(async () =>
+                {
+                    SynchronizationContext.SetSynchronizationContext(null);
+                    await Task.Delay(1).ConfigureAwait(false);
+                });
+                // This is fine; the lock still works
+                Assert.True(asyncLock.IsOnQueue);
+            }
+        }
+
+        [Fact]
+        public async Task BeCorrect3()
+        {
+            var asyncLock = new ReentrantAsyncLock();
+            SynchronizationContext.SetSynchronizationContext(null);
+            await Task.Yield();
+            // Now we're on the default thread pool synchronization context
+            await using (await asyncLock.LockAsync(CancellationToken.None))
+            {
+                // Now we're on a special synchronization context
+                Assert.NotNull(SynchronizationContext.Current);
+            }
+            // Now we're back on the default thread pool synchronization context
+            Assert.Null(SynchronizationContext.Current);
+        }
+    }
 }
