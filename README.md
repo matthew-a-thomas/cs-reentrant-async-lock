@@ -201,4 +201,4 @@ partial class MyUserControl
 
 |Version|Summary|
 |-|-|
-|0.1.0&ndash;0.1.6|Initial release (with subsequent documentation and test changes)|
+|0.1.x|Initial release (with subsequent documentation and test changes)|
