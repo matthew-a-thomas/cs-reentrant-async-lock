@@ -46,7 +46,12 @@ Assert.Equal(2, raceCondition);
 
 Some implementations will deadlock trying to re-enter the lock in one of the
 `Task.Run` calls. Others will not actually provide mutual exclusion and the
-`raceCondition` variable will sometimes equal 1 instead of 2.
+`raceCondition` variable will sometimes equal 1 instead of 2:
+
+* [Stephen Cleary's POC](https://github.com/StephenCleary/AsyncEx/blob/v4/Source/Unit%20Tests/AdvancedExamples/RecursiveAsyncLockExample.cs) does not provide mutual exclusion: https://dotnetfiddle.net/vLKyCX
+* [NeoSmart.AsyncLock](https://github.com/neosmart/AsyncLock) does not provide reentrance with mutual exclusion: https://dotnetfiddle.net/CkK674
+* [Flettu](https://github.com/mysteryjeans/Flettu/) sometimes does not provide reentrance, sometimes throws a semaphore count exception, or otherwise does not provide mutual exclusion: https://dotnetfiddle.net/o0c7j7
+* [CellWars.Threading.AsyncLock](https://github.com/jasonkuo41/CellWars.Threading.AsyncLock) does not provide mutual exclusion: https://dotnetfiddle.net/Tz38lN
 
 Check out
 [the automated tests](https://github.com/matthew-a-thomas/cs-reentrant-async-lock/blob/main/ReentrantAsyncLock.Tests/ReentrantAsyncLockClass.cs)
