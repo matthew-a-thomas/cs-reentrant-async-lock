@@ -1,5 +1,7 @@
 ﻿namespace ReentrantAsyncLock;
 
+using System;
+using System.Threading;
 using System.Threading.Tasks.Sources;
 
 readonly struct YieldToSynchronizationContextValueTaskSource : IValueTaskSource

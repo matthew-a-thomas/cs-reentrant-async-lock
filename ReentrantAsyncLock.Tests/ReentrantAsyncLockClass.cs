@@ -209,30 +209,33 @@ public class ReentrantAsyncLockClass
         public async Task BeCorrect1()
         {
             var asyncLock = new ReentrantAsyncLock();
-            var raceCondition = 0;
-            // You can acquire the lock asynchronously
-            await using (await asyncLock.LockAsync(CancellationToken.None))
+            for (var i = 0; i < 1000; ++i)
             {
-                await Task.WhenAll(
-                    Task.Run(async () =>
-                    {
-                        // The lock is reentrant
-                        await using (await asyncLock.LockAsync(CancellationToken.None))
+                var raceCondition = 0;
+                // You can acquire the lock asynchronously
+                await using (await asyncLock.LockAsync(CancellationToken.None))
+                {
+                    await Task.WhenAll(
+                        Task.Run(async () =>
                         {
-                            // The lock provides mutual exclusion
-                            raceCondition++;
-                        }
-                    }),
-                    Task.Run(async () =>
-                    {
-                        await using (await asyncLock.LockAsync(CancellationToken.None))
+                            // The lock is reentrant
+                            await using (await asyncLock.LockAsync(CancellationToken.None))
+                            {
+                                // The lock provides mutual exclusion
+                                raceCondition++;
+                            }
+                        }),
+                        Task.Run(async () =>
                         {
-                            raceCondition++;
-                        }
-                    })
-                );
+                            await using (await asyncLock.LockAsync(CancellationToken.None))
+                            {
+                                raceCondition++;
+                            }
+                        })
+                    );
+                }
+                Assert.Equal(2, raceCondition);
             }
-            Assert.Equal(2, raceCondition);
         }
 
         [Fact]

@@ -1,6 +1,9 @@
 ﻿namespace ReentrantAsyncLock;
 
+using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
+using System.Threading.Tasks;
 
 /// <summary>
 /// An asynchronous version of the <c>lock</c> statement that supports asynchronicity, reentrance, and mutual exclusion.

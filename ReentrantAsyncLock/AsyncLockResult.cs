@@ -1,6 +1,9 @@
 ﻿namespace ReentrantAsyncLock;
 
+using System;
 using System.Runtime.CompilerServices;
+using System.Threading;
+using Awaitable;
 
 /// <summary>
 /// The result of asynchronously entering the guarded section of a <see cref="ReentrantAsyncLock"/>.
@@ -61,8 +64,42 @@ public sealed class AsyncLockResult<T> : IAwaiter<T>, IAwaitable<T, AsyncLockRes
     /// <para>
     /// This method isn't intended to be used directly.
     /// </para>
+    /// <para>
+    /// This method captures the current <see cref="ExecutionContext"/> and runs the given <see cref="Action"/> on it.
+    /// </para>
     /// </remarks>
     public void OnCompleted(Action continuation)
+    {
+        var context = ExecutionContext.Capture();
+        if (context is not null)
+        {
+            void WrappedContinuation() =>
+                ExecutionContext.Run(
+                    context,
+                    state => ((Action)state!).Invoke(),
+                    continuation
+                );
+            UnsafeOnCompleted(WrappedContinuation);
+        }
+        else
+        {
+            UnsafeOnCompleted(continuation);
+        }
+    }
+
+    /// <summary>
+    /// Schedules the given asynchronous continuation to be executed later at the proper time.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">Thrown if this method is called more than once.</exception>
+    /// <remarks>
+    /// <para>
+    /// This method isn't intended to be used directly.
+    /// </para>
+    /// <para>
+    /// This method does not capture the current <see cref="ExecutionContext"/>.
+    /// </para>
+    /// </remarks>
+    public void UnsafeOnCompleted(Action continuation)
     {
         if (Interlocked.Exchange(ref _hasCompleted, 1) != 0)
             throw new InvalidOperationException($"This method must only be called once. {nameof(AsyncLockResult<T>)} works best if you simply `await` it.");
