@@ -1,30 +1,31 @@
-﻿namespace ReentrantAsyncLock;
-
-using System;
-using System.Threading;
-using System.Threading.Tasks.Sources;
-
-readonly struct YieldToSynchronizationContextValueTaskSource : IValueTaskSource
+﻿namespace ReentrantAsyncLock
 {
-    static readonly SynchronizationContext DefaultContext = new();
-    readonly SynchronizationContext? _context;
+    using System;
+    using System.Threading;
+    using System.Threading.Tasks.Sources;
 
-    public YieldToSynchronizationContextValueTaskSource(SynchronizationContext? context)
+    readonly struct YieldToSynchronizationContextValueTaskSource : IValueTaskSource
     {
-        _context = context;
-    }
+        static readonly SynchronizationContext DefaultContext = new SynchronizationContext();
+        readonly SynchronizationContext? _context;
 
-    public void GetResult(short token)
-    { }
+        public YieldToSynchronizationContextValueTaskSource(SynchronizationContext? context)
+        {
+            _context = context;
+        }
 
-    public ValueTaskSourceStatus GetStatus(short token) => ValueTaskSourceStatus.Pending;
+        public void GetResult(short token)
+        { }
 
-    public void OnCompleted(
-        Action<object?> continuation,
-        object? state,
-        short token,
-        ValueTaskSourceOnCompletedFlags flags)
-    {
-        (_context ?? DefaultContext).Post(new SendOrPostCallback(continuation), state);
+        public ValueTaskSourceStatus GetStatus(short token) => ValueTaskSourceStatus.Pending;
+
+        public void OnCompleted(
+            Action<object?> continuation,
+            object? state,
+            short token,
+            ValueTaskSourceOnCompletedFlags flags)
+        {
+            (_context ?? DefaultContext).Post(new SendOrPostCallback(continuation), state);
+        }
     }
 }
