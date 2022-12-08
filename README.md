@@ -13,9 +13,6 @@ The `ReentrantAsyncLock` class provides all three of these things:
 
 # Example
 
-This might not seem like much, but I know of no other existing implementation of
-an async lock that can do this:
-
 ```csharp
 var asyncLock = new ReentrantAsyncLock();
 var raceCondition = 0;
@@ -44,18 +41,21 @@ await using (await asyncLock.LockAsync(CancellationToken.None))
 Assert.Equal(2, raceCondition);
 ```
 
-Some implementations will deadlock trying to re-enter the lock in one of the
-`Task.Run` calls. Others will not actually provide mutual exclusion and the
-`raceCondition` variable will sometimes equal 1 instead of 2:
+Check out
+[the automated tests](https://github.com/matthew-a-thomas/cs-reentrant-async-lock/blob/main/ReentrantAsyncLock.Tests/ReentrantAsyncLockClass.cs)
+for more examples of what `ReentrantAsyncLock` can do.
+
+# Compared to other implementations
+
+[`Cogs.Threading`](https://www.nuget.org/packages/Cogs.Threading) works: https://dotnetfiddle.net/6WdVy1<br/>
+Their `ReentrantAsyncLock` is the only other working implementation that I know of. Check out that library to see if it'll work for you.
+
+There are lots of broken reentrant asynchronous locks out there. Some will deadlock trying to re-enter the lock in one of the `Task.Run` calls. Others will not actually provide mutual exclusion and the `raceCondition` variable will sometimes equal 1 instead of 2:
 
 * [Stephen Cleary's POC](https://github.com/StephenCleary/AsyncEx/blob/v4/Source/Unit%20Tests/AdvancedExamples/RecursiveAsyncLockExample.cs) does not provide mutual exclusion: https://dotnetfiddle.net/vLKyCX
 * [NeoSmart.AsyncLock](https://github.com/neosmart/AsyncLock) does not provide reentrance with mutual exclusion: https://dotnetfiddle.net/CkK674
 * [Flettu](https://github.com/mysteryjeans/Flettu/) sometimes does not provide reentrance, sometimes throws a semaphore count exception, or otherwise does not provide mutual exclusion: https://dotnetfiddle.net/o0c7j7
 * [CellWars.Threading.AsyncLock](https://github.com/jasonkuo41/CellWars.Threading.AsyncLock) does not provide mutual exclusion: https://dotnetfiddle.net/Tz38lN
-
-Check out
-[the automated tests](https://github.com/matthew-a-thomas/cs-reentrant-async-lock/blob/main/ReentrantAsyncLock.Tests/ReentrantAsyncLockClass.cs)
-for more examples of what `ReentrantAsyncLock` can do.
 
 # How does it work?
 
@@ -201,6 +201,6 @@ partial class MyUserControl
 
 |Version|Summary|
 |-|-|
-|0.3.0|Reduce package dependency graph|
+|0.3.x|Reduce package dependency graph|
 |0.2.0|Loosen framework dependency from .Net 6 to .Net Standard 2.1|
 |0.1.x|Initial release (with subsequent documentation and test changes)|

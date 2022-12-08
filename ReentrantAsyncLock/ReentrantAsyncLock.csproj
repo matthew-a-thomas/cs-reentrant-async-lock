@@ -7,7 +7,7 @@
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <PackageId>ReentrantAsyncLock</PackageId>
         <Description>A reentrant asynchronous lock</Description>
-        <Version>0.3.1</Version>
+        <Version>0.3.2</Version>
         <Authors>Matthew A. Thomas</Authors>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageProjectUrl>https://github.com/matthew-a-thomas/cs-reentrant-async-lock</PackageProjectUrl>
