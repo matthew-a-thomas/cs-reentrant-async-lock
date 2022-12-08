@@ -201,5 +201,6 @@ partial class MyUserControl
 
 |Version|Summary|
 |-|-|
+|0.3.0|Reduce package dependency graph|
 |0.2.0|Loosen framework dependency from .Net 6 to .Net Standard 2.1|
 |0.1.x|Initial release (with subsequent documentation and test changes)|
